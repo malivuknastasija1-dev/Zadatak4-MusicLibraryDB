@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Izvođači"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Forma za unos novog izvođača -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <EditText
+            android:id="@+id/artistNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Naziv novog izvođača"
+            android:inputType="textCapWords"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Izaberi žanr:"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/genreSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/addArtistButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dodaj Izvođača"
+            android:textSize="18sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Postojeći izvođači (klikni za izmenu/brisanje):"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Lista izvođača -->
+    <ListView
+        android:id="@+id/artistsListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#CCCCCC"
+        android:dividerHeight="1dp" />
+
+</LinearLayout>
