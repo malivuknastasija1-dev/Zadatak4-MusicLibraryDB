@@ -113,7 +113,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- LISTA PESAMA --
     <ListView
         android:id="@+id/songsListView"
         android:layout_width="match_parent"
