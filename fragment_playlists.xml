@@ -110,7 +110,6 @@
             android:text="Traži" />
     </LinearLayout>
 
-    <!-- LISTA PLEJLISTI -->
     <ListView
         android:id="@+id/playlistsListView"
         android:layout_width="match_parent"
