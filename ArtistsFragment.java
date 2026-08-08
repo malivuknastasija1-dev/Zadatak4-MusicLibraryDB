@@ -58,7 +58,6 @@ public class ArtistsFragment extends Fragment {
         resetArtistFilterButton = view.findViewById(R.id.resetArtistFilterButton);
         artistsListView = view.findViewById(R.id.artistsListView);
 
-        // Elementi za Wildcard pretragu
         EditText searchQueryEditText = view.findViewById(R.id.searchQueryEditText);
         Button searchQueryButton = view.findViewById(R.id.searchQueryButton);
 
@@ -78,7 +77,6 @@ public class ArtistsFragment extends Fragment {
         loadGenresToSpinner();
         loadArtistsFromDatabase();
 
-        // 1. Dodavanje izvođača
         addArtistButton.setOnClickListener(v -> {
             String name = artistNameEditText.getText().toString().trim();
             int selectedGenrePosition = genreSpinner.getSelectedItemPosition();
@@ -107,7 +105,6 @@ public class ArtistsFragment extends Fragment {
             loadArtistsFromDatabase();
         });
 
-        // 2. WILDCARD PRETRAGA IZVOĐAČA PO TEKSTU/IMENU
         if (searchQueryButton != null && searchQueryEditText != null) {
             searchQueryButton.setOnClickListener(v -> {
                 String query = searchQueryEditText.getText().toString().trim();
@@ -120,7 +117,6 @@ public class ArtistsFragment extends Fragment {
             });
         }
 
-        // 3. PRETRAGA IZVOĐAČA PO ŽANRU (Filter preko Spinner-a)
         filterArtistButton.setOnClickListener(v -> {
             int selectedPos = filterGenreSpinner.getSelectedItemPosition();
             if (selectedPos > 0 && selectedPos - 1 < genreList.size()) {
@@ -132,7 +128,6 @@ public class ArtistsFragment extends Fragment {
             updateArtistListView(artistList);
         });
 
-        // 4. PONIŠTAVANJE PRETRAGE (Prikaz svih)
         resetArtistFilterButton.setOnClickListener(v -> {
             filterGenreSpinner.setSelection(0);
             if (searchQueryEditText != null) searchQueryEditText.setText("");
