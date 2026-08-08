@@ -63,7 +63,6 @@ public class SongsFragment extends Fragment {
         resetSearchButton = view.findViewById(R.id.resetSearchButton);
         songsListView = view.findViewById(R.id.songsListView);
 
-        // Elementi za Wildcard pretragu po tekstu/nazivu pesme
         EditText searchQueryEditText = view.findViewById(R.id.searchQueryEditText);
         Button searchQueryButton = view.findViewById(R.id.searchQueryButton);
 
@@ -77,7 +76,6 @@ public class SongsFragment extends Fragment {
         loadSpinnersData();
         loadSongsFromDatabase();
 
-        // 1. Dodavanje pesme
         addSongButton.setOnClickListener(v -> {
             String title = songTitleEditText.getText().toString().trim();
             int artistPos = artistSpinner.getSelectedItemPosition();
@@ -96,7 +94,6 @@ public class SongsFragment extends Fragment {
             Artist selectedArtist = artistList.get(artistPos);
             Genre selectedGenre = genreList.get(genrePos);
 
-            // PROVERA DUPLIKATA
             if (dbHelper.existsSong(title, selectedArtist.getId())) {
                 Toast.makeText(getActivity(), "Ova pesma za izabranog izvođača već postoji!", Toast.LENGTH_SHORT).show();
                 return;
@@ -110,7 +107,6 @@ public class SongsFragment extends Fragment {
             loadSongsFromDatabase();
         });
 
-        // 2. WILDCARD PRETRAGA PESAMA PO NAZIVU
         if (searchQueryButton != null && searchQueryEditText != null) {
             searchQueryButton.setOnClickListener(v -> {
                 String query = searchQueryEditText.getText().toString().trim();
@@ -123,7 +119,6 @@ public class SongsFragment extends Fragment {
             });
         }
 
-        // 3. PRETRAGA PESAMA PO SPINNER-IMA ("Svi izvođači" ili "Svi žanrovi")
         searchButton.setOnClickListener(v -> {
             long artistId = 0;
             long genreId = 0;
@@ -143,7 +138,6 @@ public class SongsFragment extends Fragment {
             updateSongListView(songList);
         });
 
-        // 4. RESETOVANJE PRETRAGE
         resetSearchButton.setOnClickListener(v -> {
             filterArtistSpinner.setSelection(0);
             filterGenreSpinner.setSelection(0);
