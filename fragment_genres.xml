@@ -43,6 +43,27 @@
         android:textSize="14sp"
         android:textStyle="italic" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/searchQueryEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Pretraži po nazivu (wildcard)..."
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/searchQueryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Traži" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/genresListView"
         android:layout_width="match_parent"
