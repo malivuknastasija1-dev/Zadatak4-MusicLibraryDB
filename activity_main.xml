@@ -16,6 +16,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="8dp"
+        android:layout_marginTop="20dp"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -24,7 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="User: -"
+            android:text="Korisnik: "
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -42,54 +43,69 @@
         android:background="#CCCCCC"
         android:layout_marginBottom="8dp"/>
 
-    <!-- SREDISNJI DEO: Kontejner u kome se smenjuju Fragmenti -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- DONJI DEO: Navigacija sa dugmićima za entitete -->
     <LinearLayout
         android:id="@+id/navigationLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="34dp"
         android:visibility="gone"
         tools:visibility="visible">
 
-        <Button
-            android:id="@+id/navGenresButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Genres"
-            android:textSize="15sp" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-        <Button
-            android:id="@+id/navArtistsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Artists"
-            android:textSize="15sp" />
+            <Button
+                android:id="@+id/navGenresButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="Žanrovi"
+                android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/navSongsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Songs"
-            android:textSize="15sp" />
+            <Button
+                android:id="@+id/navArtistsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Izvođači"
+                android:textSize="18sp" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/navPlaylistsButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Playlists"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/navSongsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="Pesme"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/navPlaylistsButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Plejliste"
+                android:textSize="18sp" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
