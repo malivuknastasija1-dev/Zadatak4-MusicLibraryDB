@@ -8,55 +8,126 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Izvođači"
+        android:text="Upravljanje Izvođačima"
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginBottom="12dp" />
 
-    <!-- Forma za unos novog izvođača -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginBottom="16dp">
+        android:background="#2C2C2C"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dodaj novog izvođača:"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:layout_marginBottom="6dp" />
 
         <EditText
             android:id="@+id/artistNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Naziv novog izvođača"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#AAAAAA"
             android:inputType="textCapWords"
-            android:layout_marginBottom="8dp" />
+            android:minHeight="48dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Izaberi žanr:"
-            android:textSize="14sp" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp" />
 
         <Spinner
             android:id="@+id/genreSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:minHeight="48dp" />
 
         <Button
             android:id="@+id/addArtistButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Dodaj Izvođača"
-            android:textSize="18sp"/>
+            android:minHeight="48dp"
+            android:layout_marginTop="6dp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Postojeći izvođači (klikni za izmenu/brisanje):"
-        android:textSize="14sp"
-        android:textStyle="italic"
-        android:layout_marginBottom="6dp" />
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
 
-    <!-- Lista izvođača -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filtriraj izvođače po žanru:"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:layout_marginBottom="4dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/filterGenreSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp" />
+
+            <Button
+                android:id="@+id/filterArtistButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Traži"
+                android:textSize="12sp"
+                android:minHeight="48dp" />
+
+            <Button
+                android:id="@+id/resetArtistFilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Svi"
+                android:textSize="12sp"
+                android:minHeight="48dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/searchQueryEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Pretraži po nazivu (wildcard)..."
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/searchQueryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Traži" />
+    </LinearLayout>
+
     <ListView
         android:id="@+id/artistsListView"
         android:layout_width="match_parent"
@@ -64,5 +135,4 @@
         android:layout_weight="1"
         android:divider="#CCCCCC"
         android:dividerHeight="1dp" />
-
 </LinearLayout>
