@@ -51,8 +51,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String KEY_PLAYLIST_ID = "playlist_id";
     private static final String KEY_SONG_ID = "song_id";
 
-    // --- SQL komande za kreiranje tabela ---
-
     private static final String CREATE_TABLE_USERS = "CREATE TABLE IF NOT EXISTS "
             + TABLE_USERS + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
             + KEY_USERNAME + " TEXT," + KEY_PASSWORD + " TEXT" + ")";
@@ -130,17 +128,24 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     //          USER        //
-    public User loginOrRegister(String username, String password) {
+    public User loginOrRegister(String username, String password) throws Exception {
         String selectQuery = "SELECT * FROM " + TABLE_USERS + " WHERE "
                 + KEY_USERNAME + " = ?";
         Cursor c = db.rawQuery(selectQuery, new String[]{username});
 
         if (c != null && c.moveToFirst()) {
             //sign in
+            String dbPassword = c.getString(c.getColumnIndexOrThrow(KEY_PASSWORD));
+
+            if (!dbPassword.equals(password)) {
+                c.close();
+                throw new Exception("Pogrešna lozinka za korisnika " + username + "!");
+            }
+
             User user = new User();
             user.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
             user.setUsername(c.getString(c.getColumnIndexOrThrow(KEY_USERNAME)));
-            user.setPassword(c.getString(c.getColumnIndexOrThrow(KEY_PASSWORD)));
+            user.setPassword(dbPassword);
             c.close();
             return user;
         } else {
@@ -199,8 +204,37 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return db.update(TABLE_GENRES, values, KEY_ID + " = ?", new String[]{String.valueOf(genre.getId())});
     }
 
+    public boolean existsGenre(String name) {
+        String query = "SELECT 1 FROM " + TABLE_GENRES + " WHERE " + KEY_NAME + " LIKE ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
+    public ArrayList<Genre> searchGenresByText(String text) {
+        ArrayList<Genre> genres = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_GENRES + " WHERE " + KEY_NAME + " LIKE ?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{"%" + text.trim() + "%"});
+
+        if (c.moveToFirst()) {
+            do {
+                Genre g = new Genre();
+                g.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
+                g.setName(c.getString(c.getColumnIndexOrThrow(KEY_NAME)));
+                genres.add(g);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return genres;
+    }
+
     public void deleteGenre(long genreId) {
-        // Zadaćemo uslov da obrišemo žanr
+        String deletePlaylistSongs = "DELETE FROM " + TABLE_PLAYLIST_SONGS +
+                " WHERE " + KEY_SONG_ID + " IN (SELECT " + KEY_ID + " FROM " + TABLE_SONGS + " WHERE " + KEY_GENRE_ID + " = ?)";
+        db.execSQL(deletePlaylistSongs, new String[]{String.valueOf(genreId)});
+        db.delete(TABLE_SONGS, KEY_GENRE_ID + " = ?", new String[]{String.valueOf(genreId)});
+        db.delete(TABLE_ARTISTS, KEY_GENRE_ID + " = ?", new String[]{String.valueOf(genreId)});
         db.delete(TABLE_GENRES, KEY_ID + " = ?", new String[]{String.valueOf(genreId)});
     }
 
@@ -247,6 +281,23 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return artists;
     }
 
+    public ArrayList<Artist> getArtistsByGenre(long genreId) {
+        ArrayList<Artist> artists = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ARTISTS + " WHERE " + KEY_GENRE_ID + " = ?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(genreId)});
+        if (c.moveToFirst()) {
+            do {
+                Artist a = new Artist();
+                a.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
+                a.setName(c.getString(c.getColumnIndexOrThrow(KEY_NAME)));
+                a.setGenre(getGenre(genreId));
+                artists.add(a);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return artists;
+    }
+
     public int updateArtist(Artist artist) {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, artist.getName());
@@ -254,7 +305,37 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return db.update(TABLE_ARTISTS, values, KEY_ID + " = ?", new String[]{String.valueOf(artist.getId())});
     }
 
+    public boolean existsArtist(String name, long genreId) {
+        String query = "SELECT 1 FROM " + TABLE_ARTISTS + " WHERE " + KEY_NAME + " LIKE ? AND " + KEY_GENRE_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name, String.valueOf(genreId)});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
+    public ArrayList<Artist> searchArtistsByText(String text) {
+        ArrayList<Artist> artists = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_ARTISTS + " WHERE " + KEY_NAME + " LIKE ?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{"%" + text.trim() + "%"});
+
+        if (c.moveToFirst()) {
+            do {
+                Artist a = new Artist();
+                a.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
+                a.setName(c.getString(c.getColumnIndexOrThrow(KEY_NAME)));
+                a.setGenre(getGenre(c.getLong(c.getColumnIndexOrThrow(KEY_GENRE_ID))));
+                artists.add(a);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return artists;
+    }
+
     public void deleteArtist(long artistId) {
+        String deletePlaylistSongs = "DELETE FROM " + TABLE_PLAYLIST_SONGS +
+                " WHERE " + KEY_SONG_ID + " IN (SELECT " + KEY_ID + " FROM " + TABLE_SONGS + " WHERE " + KEY_ARTIST_ID + " = ?)";
+        db.execSQL(deletePlaylistSongs, new String[]{String.valueOf(artistId)});
+        db.delete(TABLE_SONGS, KEY_ARTIST_ID + " = ?", new String[]{String.valueOf(artistId)});
         db.delete(TABLE_ARTISTS, KEY_ID + " = ?", new String[]{String.valueOf(artistId)});
     }
 
@@ -302,19 +383,29 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return songs;
     }
 
-    // Pretraga pesama po izvođaču i žanru (zahtev iz teksta zadatka)
-    public ArrayList<Song> getSongsByArtistAndGenre(long artistId, long genreId) {
+    public ArrayList<Song> searchSongs(long artistId, long genreId) {
         ArrayList<Song> songs = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_SONGS + " WHERE "
-                + KEY_ARTIST_ID + " = ? AND " + KEY_GENRE_ID + " = ?";
-        Cursor c = db.rawQuery(selectQuery, new String[]{String.valueOf(artistId), String.valueOf(genreId)});
+        StringBuilder selectQuery = new StringBuilder("SELECT * FROM " + TABLE_SONGS + " WHERE 1=1");
+        ArrayList<String> args = new ArrayList<>();
+
+        if (artistId > 0) {
+            selectQuery.append(" AND ").append(KEY_ARTIST_ID).append(" = ?");
+            args.add(String.valueOf(artistId));
+        }
+
+        if (genreId > 0) {
+            selectQuery.append(" AND ").append(KEY_GENRE_ID).append(" = ?");
+            args.add(String.valueOf(genreId));
+        }
+
+        Cursor c = db.rawQuery(selectQuery.toString(), args.toArray(new String[0]));
         if (c.moveToFirst()) {
             do {
                 Song s = new Song();
                 s.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
                 s.setTitle(c.getString(c.getColumnIndexOrThrow(KEY_TITLE)));
-                s.setArtist(getArtist(artistId));
-                s.setGenre(getGenre(genreId));
+                s.setArtist(getArtist(c.getLong(c.getColumnIndexOrThrow(KEY_ARTIST_ID))));
+                s.setGenre(getGenre(c.getLong(c.getColumnIndexOrThrow(KEY_GENRE_ID))));
                 songs.add(s);
             } while (c.moveToNext());
         }
@@ -325,12 +416,47 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     public int updateSong(Song song) {
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, song.getTitle());
-        values.put(KEY_ARTIST_ID, song.getArtist().getId());
-        values.put(KEY_GENRE_ID, song.getGenre().getId());
-        return db.update(TABLE_SONGS, values, KEY_ID + " = ?", new String[]{String.valueOf(song.getId())});
+
+        if (song.getArtist() != null) {
+            values.put(KEY_ARTIST_ID, song.getArtist().getId());
+        }
+        if (song.getGenre() != null) {
+            values.put(KEY_GENRE_ID, song.getGenre().getId());
+        }
+
+        return db.update(TABLE_SONGS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(song.getId())});
+    }
+
+    public boolean existsSong(String title, long artistId) {
+        String query = "SELECT 1 FROM " + TABLE_SONGS + " WHERE " + KEY_TITLE + " LIKE ? AND " + KEY_ARTIST_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{title, String.valueOf(artistId)});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
+    public ArrayList<Song> searchSongsByText(String text) {
+        ArrayList<Song> songs = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_SONGS + " WHERE " + KEY_TITLE + " LIKE ?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{"%" + text.trim() + "%"});
+
+        if (c.moveToFirst()) {
+            do {
+                Song s = new Song();
+                s.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
+                s.setTitle(c.getString(c.getColumnIndexOrThrow(KEY_TITLE)));
+                s.setArtist(getArtist(c.getLong(c.getColumnIndexOrThrow(KEY_ARTIST_ID))));
+                s.setGenre(getGenre(c.getLong(c.getColumnIndexOrThrow(KEY_GENRE_ID))));
+                songs.add(s);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return songs;
     }
 
     public void deleteSong(long songId) {
+        db.delete(TABLE_PLAYLIST_SONGS, KEY_SONG_ID + " = ?", new String[]{String.valueOf(songId)});
         db.delete(TABLE_SONGS, KEY_ID + " = ?", new String[]{String.valueOf(songId)});
     }
 
@@ -344,6 +470,39 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return playlistId;
     }
 
+    public int updatePlaylist(Playlist playlist) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_TITLE, playlist.getTitle());
+        return db.update(TABLE_PLAYLISTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(playlist.getId())});
+    }
+
+    public boolean existsPlaylist(String title, long userId) {
+        String query = "SELECT 1 FROM " + TABLE_PLAYLISTS + " WHERE " + KEY_TITLE + " LIKE ? AND " + KEY_USER_ID + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{title, String.valueOf(userId)});
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
+    public ArrayList<Playlist> searchPlaylistsByText(String text, long userId) {
+        ArrayList<Playlist> playlists = new ArrayList<>();
+        String selectQuery = "SELECT * FROM " + TABLE_PLAYLISTS + " WHERE " + KEY_TITLE + " LIKE ? AND " + KEY_USER_ID + " = ?";
+        Cursor c = db.rawQuery(selectQuery, new String[]{"%" + text.trim() + "%", String.valueOf(userId)});
+
+        if (c.moveToFirst()) {
+            do {
+                Playlist p = new Playlist();
+                p.setId(c.getLong(c.getColumnIndexOrThrow(KEY_ID)));
+                p.setTitle(c.getString(c.getColumnIndexOrThrow(KEY_TITLE)));
+                p.setSongs(getSongsForPlaylist(p.getId()));
+                playlists.add(p);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return playlists;
+    }
+
     public void addSongToPlaylist(long playlistId, long songId) {
         ContentValues values = new ContentValues();
         values.put(KEY_PLAYLIST_ID, playlistId);
@@ -351,7 +510,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.insert(TABLE_PLAYLIST_SONGS, null, values);
     }
 
-    // Dobijanje plejlisti SAMO za ulogovanog korisnika (Napomena 3 u zadatku)
+    public void removeSongFromPlaylist(long playlistId, long songId) {
+        db.delete(TABLE_PLAYLIST_SONGS, KEY_PLAYLIST_ID + " = ? AND " + KEY_SONG_ID + " = ?",
+                new String[]{String.valueOf(playlistId), String.valueOf(songId)});
+    }
+
     public ArrayList<Playlist> getUserPlaylists(User user) {
         ArrayList<Playlist> playlists = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_PLAYLISTS + " WHERE " + KEY_USER_ID + " = ?";
@@ -389,9 +552,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
 
     public void deletePlaylist(long playlistId) {
-        // prvo brišemo veze iz spojne tabele, pa samu plejlistu
         db.delete(TABLE_PLAYLIST_SONGS, KEY_PLAYLIST_ID + " = ?", new String[]{String.valueOf(playlistId)});
         db.delete(TABLE_PLAYLISTS, KEY_ID + " = ?", new String[]{String.valueOf(playlistId)});
     }
 
 }
+
