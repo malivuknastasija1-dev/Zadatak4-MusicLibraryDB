@@ -13,47 +13,53 @@
         android:textStyle="bold"
         android:layout_marginBottom="12dp" />
 
-    <!-- FORMA ZA UNOS NOVE PESME -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#F0F0F0"
-        android:padding="8dp"
+        android:background="#2C2C2C"
+        android:padding="12dp"
         android:layout_marginBottom="12dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dodaj novu pesmu - izaberi izvođača i žanr:"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
+            android:textSize="14sp"
+            android:layout_marginBottom="6dp" />
 
         <EditText
             android:id="@+id/songTitleEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Naziv pesme"
-            android:inputType="textCapWords" />
+            android:textColor="#FFFFFF"
+            android:textColorHint="#AAAAAA"
+            android:inputType="textCapWords"
+            android:minHeight="48dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="6dp">
 
             <Spinner
                 android:id="@+id/artistSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:minHeight="48dp"/>
 
             <Spinner
                 android:id="@+id/genreSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:minHeight="48dp"/>
         </LinearLayout>
 
         <Button
@@ -62,7 +68,8 @@
             android:layout_height="wrap_content"
             android:text="Sačuvaj pesmu"
             android:textSize="18sp"
-            android:layout_marginTop="6dp" />
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -76,7 +83,8 @@
             android:layout_height="wrap_content"
             android:text="Pretraga pesama po izvođaču i žanru:"
             android:textStyle="bold"
-            android:textSize="12sp" />
+            android:textSize="13sp"
+            android:layout_marginBottom="4dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -87,30 +95,53 @@
                 android:id="@+id/filterArtistSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:minHeight="48dp" />
 
             <Spinner
                 android:id="@+id/filterGenreSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:minHeight="48dp" />
 
             <Button
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Traži"
-                android:textSize="18sp"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:minHeight="48dp" />
 
             <Button
                 android:id="@+id/resetSearchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sve"
-                android:textSize="18sp"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:minHeight="48dp" />
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <EditText
+            android:id="@+id/searchQueryEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Pretraži po nazivu (wildcard)..."
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/searchQueryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Traži" />
     </LinearLayout>
 
     <ListView
