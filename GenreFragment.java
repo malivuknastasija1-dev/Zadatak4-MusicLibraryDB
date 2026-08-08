@@ -42,7 +42,6 @@ public class GenreFragment extends Fragment {
         addGenreButton = view.findViewById(R.id.addGenreButton);
         genresListView = view.findViewById(R.id.genresListView);
 
-        // Elementi za Wildcard pretragu
         EditText searchQueryEditText = view.findViewById(R.id.searchQueryEditText);
         Button searchQueryButton = view.findViewById(R.id.searchQueryButton);
 
@@ -55,7 +54,6 @@ public class GenreFragment extends Fragment {
 
         loadGenresFromDatabase();
 
-        // 1. Dodavanje novog žanra
         addGenreButton.setOnClickListener(v -> {
             String name = genreNameEditText.getText().toString().trim();
             if (name.isEmpty()) {
@@ -63,7 +61,6 @@ public class GenreFragment extends Fragment {
                 return;
             }
 
-            // PROVERA DUPLIKATA
             if (dbHelper.existsGenre(name)) {
                 Toast.makeText(getActivity(), "Žanr sa ovim nazivom već postoji!", Toast.LENGTH_SHORT).show();
                 return;
@@ -76,7 +73,6 @@ public class GenreFragment extends Fragment {
             loadGenresFromDatabase();
         });
 
-        // 2. WILDCARD PRETRAGA ŽANROVA PO TEKSTU
         if (searchQueryButton != null && searchQueryEditText != null) {
             searchQueryButton.setOnClickListener(v -> {
                 String query = searchQueryEditText.getText().toString().trim();
@@ -89,7 +85,6 @@ public class GenreFragment extends Fragment {
             });
         }
 
-        // 3. Klik na žanr u listi -> Dijalog za izmenu/brisanje
         genresListView.setOnItemClickListener((parent, view1, position, id) -> {
             Genre selectedGenre = genreList.get(position);
             showGenreOptionsDialog(selectedGenre);
