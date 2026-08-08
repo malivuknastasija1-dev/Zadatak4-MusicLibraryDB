@@ -59,7 +59,6 @@ public class PlaylistFragment extends Fragment {
         songsSpinner = view.findViewById(R.id.songsSpinner);
         playlistsListView = view.findViewById(R.id.playlistsListView);
 
-        // Elementi za Wildcard pretragu
         EditText searchQueryEditText = view.findViewById(R.id.searchQueryEditText);
         Button searchQueryButton = view.findViewById(R.id.searchQueryButton);
 
@@ -80,7 +79,6 @@ public class PlaylistFragment extends Fragment {
 
         loadData();
 
-        // 1. Kreiranje nove plejliste
         createPlaylistButton.setOnClickListener(v -> {
             String title = playlistTitleEditText.getText().toString().trim();
             if (title.isEmpty()) {
@@ -93,7 +91,6 @@ public class PlaylistFragment extends Fragment {
                 return;
             }
 
-            // PROVERA DUPLIKATA
             if (dbHelper.existsPlaylist(title, currentUser.getId())) {
                 Toast.makeText(getActivity(), "Već imate plejlistu sa ovim nazivom!", Toast.LENGTH_SHORT).show();
                 return;
@@ -107,7 +104,6 @@ public class PlaylistFragment extends Fragment {
             loadData();
         });
 
-        // 2. Dodavanje pesme na plejlistu
         addSongToPlaylistButton.setOnClickListener(v -> {
             if (userPlaylists.isEmpty() || allSongs.isEmpty()) {
                 Toast.makeText(getActivity(), "Morate imati bar jednu plejlistu i jednu pesmu!", Toast.LENGTH_SHORT).show();
@@ -122,13 +118,11 @@ public class PlaylistFragment extends Fragment {
             loadData();
         });
 
-        // 3. Klik na plejlistu -> Otvaranje menija sa opcijama
         playlistsListView.setOnItemClickListener((parent, view1, position, id) -> {
             Playlist selectedPlaylist = userPlaylists.get(position);
             showPlaylistMeniDialog(selectedPlaylist);
         });
 
-        // 4. WILDCARD PRETRAGA PLEJLISTI PO NAZIVU
         searchQueryButton.setOnClickListener(v -> {
             String query = searchQueryEditText.getText().toString().trim();
             if (!query.isEmpty() && currentUser != null) {
@@ -172,19 +166,15 @@ public class PlaylistFragment extends Fragment {
         playlistListAdapter.notifyDataSetChanged();
     }
 
-    // Glavni opcioni dijalog za plejlistu
     private void showPlaylistMeniDialog(Playlist playlist) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Plejlista: " + playlist.getTitle());
         builder.setMessage("Izaberite akciju koju želite da izvršite:");
 
-        // Opcija A: Izmeni naziv
         builder.setPositiveButton("Izmeni naziv", (dialog, which) -> showEditPlaylistTitleDialog(playlist));
 
-        // Opcija B: Pregled / Ukloni pesme
         builder.setNeutralButton("Pesme na plejlisti", (dialog, which) -> showRemoveSongsDialog(playlist));
 
-        // Opcija C: Obriši kompletnu plejlistu
         builder.setNegativeButton("Obriši", (dialog, which) -> {
             dbHelper.deletePlaylist(playlist.getId());
             Toast.makeText(getActivity(), "Plejlista obrisana!", Toast.LENGTH_SHORT).show();
@@ -194,7 +184,6 @@ public class PlaylistFragment extends Fragment {
         builder.show();
     }
 
-    // Dijalog za izmenu naziva plejliste
     private void showEditPlaylistTitleDialog(Playlist playlist) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Izmena naziva plejliste");
@@ -220,7 +209,6 @@ public class PlaylistFragment extends Fragment {
         builder.show();
     }
 
-    // Dijalog sa spiskom pesama unutar plejliste sa opcijom uklanjanja
     private void showRemoveSongsDialog(Playlist playlist) {
         ArrayList<Song> songsInPlaylist = playlist.getSongs();
 
